@@ -4,7 +4,13 @@ This plugin provides an implementation of an Android service library which uses 
 
 Based in [RadioPlayerService](https://github.com/iammert/RadioPlayerService) is the solution for long time Android HTML5 Audio implementation takes before playing a streaming.
 
-Also offers a nice notification to control the service when it's in running in the background
+
+
+## Notifications
+Nice notification to control the service when it's in running in the background
+<img src="https://raw.githubusercontent.com/mradosta/cordova-plugin-streaming/master/screenshots/a.png"/>
+<img src="https://raw.githubusercontent.com/mradosta/cordova-plugin-streaming/master/screenshots/b.png"/>
+
 
 
 ## Supported Platforms

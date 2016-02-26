@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:rim="http://www.blackberry.com/ns/widgets"
+    id="cordova-plugin-streaming"
+    version="1.1.0">
+    <name>Streaming Plugin</name>
+    <description>Streaming Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>streaming,radio,libaacdecoder</keywords>
+    <repo>https://github.com/mradosta/cordova-plugin-streaming</repo>
+    <issue>https://github.com/mradosta/cordova-plugin-streaming/issues</issue>
+
+    <js-module src="www/radio.js" name="RADIO">
+        <clobbers target="navigator.RADIO" />
+    </js-module>
+
+
+    <platform name="android">
+
+
+      <config-file target="res/xml/config.xml" parent="/*">
+          <feature name="RadioPlugin">
+              <param name="android-package" value="com.imsd.radio.RadioPlugin"/>
+              <param name="onload" value="true" />
+          </feature>
+      </config-file>
+
+      <config-file target="AndroidManifest.xml" parent="/manifest/application">
+        <service android:name="com.imsd.radio.RadioPlayerService">
+          <intent-filter>
+              <action android:name="com.imsd.radio.INTENT_PLAYPAUSE"/>
+              <action android:name="com.imsd.radio.INTENT_OPENPLAYER"/>
+              <action android:name="com.imsd.radio.INTENT_CANCEL"/>
+          </intent-filter>
+        </service>
+      </config-file>
+
+
+        <config-file target="AndroidManifest.xml" parent="/*">
+          <uses-permission android:name="android.permission.INTERNET" />
+          <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+          <uses-permission android:name="android.permission.WAKE_LOCK" />
+        </config-file>
+
+
+        <source-file src="src/android/res/drawable/btn_notification_collapse.png" target-dir="res/drawable/" />
+        <source-file src="src/android/res/drawable/btn_playback_pause.png" target-dir="res/drawable/" />
+        <source-file src="src/android/res/drawable/btn_playback_play.png" target-dir="res/drawable/" />
+        <source-file src="src/android/res/drawable/default_art.png" target-dir="res/drawable/" />
+        <source-file src="src/android/res/layout/notification.xml" target-dir="res/layout/" />
+        <source-file src="src/android/res/layout/notification_expanded.xml" target-dir="res/layout/" />
+        <source-file src="src/android/res/values/style.xml" target-dir="res/values/" />
+        <source-file src="src/android/res/values/dimens.xml" target-dir="res/values/" />
+
+
+        <source-file src="src/android/radio/FakeR.java" target-dir="src/com/imsd/radio/" />
+        <source-file src="src/android/radio/IRadioManager.java" target-dir="src/com/imsd/radio/" />
+        <source-file src="src/android/radio/RadioListener.java" target-dir="src/com/imsd/radio/" />
+        <source-file src="src/android/radio/RadioManager.java" target-dir="src/com/imsd/radio/" />
+        <source-file src="src/android/radio/RadioPlayerService.java" target-dir="src/com/imsd/radio/" />
+        <source-file src="src/android/radio/StreamLinkDecoder.java" target-dir="src/com/imsd/radio/" />
+
+        <source-file src="src/android/RadioPlugin.java" target-dir="src/com/imsd/radio/" />
+
+        <source-file src="src/android/libs/armeabi/libaacdecoder.so" target-dir="libs/armeabi" />
+        <source-file src="src/android/libs/armeabi-v7a/libaacdecoder.so" target-dir="libs/armeabi-v7a" />
+        <source-file src="src/android/libs/mips/libaacdecoder.so" target-dir="libs/mips" />
+        <source-file src="src/android/libs/x86/libaacdecoder.so" target-dir="libs/x86" />
+        <source-file src="src/android/libs/libaacdecoder.jar" target-dir="libs" />
+
+
+     </platform>
+
+</plugin>

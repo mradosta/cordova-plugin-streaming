@@ -1,0 +1,28 @@
+{
+  "name": "cordova-plugin-streaming",
+  "version": "1.1.0",
+  "description": "Streaming Plugin",
+  "cordova": {
+    "id": "cordova-plugin-streaming",
+    "platforms": [
+      "android"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mradosta/cordova-plugin-streaming.git"
+  },
+  "keywords": [
+    "streaming",
+    "radio",
+    "libaacdecoder",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "author": "mradosta",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/mradosta/cordova-plugin-streaming/issues"
+  },
+  "homepage": "https://github.com/mradosta/cordova-plugin-streaming#readme"
+}

@@ -8,8 +8,8 @@ Based in [RadioPlayerService](https://github.com/iammert/RadioPlayerService) is 
 
 ## Notifications
 Nice notification to control the service when it's in running in the background
-<img src="https://raw.githubusercontent.com/mradosta/cordova-plugin-streaming/master/screenshots/a.png"/>
-<img src="https://raw.githubusercontent.com/mradosta/cordova-plugin-streaming/master/screenshots/b.png"/>
+<img src="https://raw.githubusercontent.com/mradosta/cordova-plugin-streaming/master/screenshots/a.png" style="width:49%"/>
+<img src="https://raw.githubusercontent.com/mradosta/cordova-plugin-streaming/master/screenshots/b.png" style="width:49%"/>
 
 
 

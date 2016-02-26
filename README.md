@@ -15,7 +15,7 @@ This plugin provides an implementation of an Android service library which uses 
 ### Quick Example
 ...
 onDeviceReady: function() {
-
+```js
   navigator.RADIO.initialize(function(s) {
     console.log('SUCCESS navigator.RADIO.initialize');
   }, function(s) {
@@ -41,3 +41,4 @@ navigator.RADIO.stop(function(s) {
 }, function(s) {
   console.log('ERROR navigator.RADIO.stop');
 });
+```

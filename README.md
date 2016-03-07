@@ -41,6 +41,11 @@ onDeviceReady: function() {
 
   navigator.RADIO.initialize(function(s) {
     console.log('SUCCESS navigator.RADIO.initialize');
+    if (s == 'STOPPED-FROM-NOTIFICATION') {
+      // the reproduction was stopped from the notification
+    } else if (s == 'STOPPED') {
+      // the reproduction was stopped other than the notification
+    }
   }, function(s) {
     console.log('ERROR navigator.RADIO.initialize');
   });
@@ -51,9 +56,7 @@ onDeviceReady: function() {
 
 var url = 'http://hayatmix.net/;yayin.mp3.m3u';
 navigator.RADIO.play(function(s) {
-  if (s == 'STOPPED') {
-    // the reproduction was stopped somewhere else. The notification?
-  }
+  console.log('SUCCESS navigator.RADIO.play');
 }, function(s) {
   console.log('ERROR navigator.RADIO.play');
 }, url, 'My Stream Title', 'My Stream Subtitle');

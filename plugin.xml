@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:rim="http://www.blackberry.com/ns/widgets"
     id="cordova-plugin-streaming"
-    version="1.1.0">
+    version="1.3.0">
     <name>Streaming Plugin</name>
     <description>Streaming Plugin</description>
     <license>Apache 2.0</license>

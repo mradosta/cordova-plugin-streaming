@@ -305,13 +305,14 @@ public class RadioPlayerService extends Service implements PlayerCallback {
          * If player stopped from notification then dont
          * call buildNotification().
          */
+         log("Player stopped. isClosedFromNotification : " + isClosedFromNotification);
+        notifyRadioStopped(isClosedFromNotification);
         if (!isClosedFromNotification)
             buildNotification();
         else
             isClosedFromNotification = false;
 
         mLock = false;
-        notifyRadioStopped();
         mNotificationManager.cancel(NOTIFICATION_ID);
         log("Player stopped. State : " + mRadioState);
 
@@ -354,9 +355,9 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         }
     }
 
-    private void notifyRadioStopped() {
+    private void notifyRadioStopped(boolean closedFromNotification) {
         for (RadioListener mRadioListener : mListenerList)
-            mRadioListener.onRadioStopped();
+            mRadioListener.onRadioStopped(closedFromNotification);
     }
 
     private void notifyMetaDataChanged(String s, String s2) {

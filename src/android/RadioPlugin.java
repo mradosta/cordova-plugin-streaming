@@ -37,8 +37,11 @@ public class RadioPlugin extends CordovaPlugin implements RadioListener {
         mRadioManager.setLogging(true);
         mRadioManager.connect();
 
+        this.connectionCallbackContext = callbackContext;
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
+        pluginResult.setKeepCallback(true);
 
-        callbackContext.success();
+        //callbackContext.success();
         return true;
       } catch (Exception e) {
         Log.e(LOG_TAG, "Exception occurred: ".concat(e.getMessage()));
@@ -46,33 +49,17 @@ public class RadioPlugin extends CordovaPlugin implements RadioListener {
         return false;
       }
 
-/*
-    } else if ("onStop".equals(action)) {
-      this.connectionCallbackContext = callbackContext;
-      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, connectionType);
-      pluginResult.setKeepCallback(true);
-      callbackContext.sendPluginResult(pluginResult);
-*/
+
+//    } else if ("onStop".equals(action)) {
+//      this.connectionCallbackContext = callbackContext;
+//      PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
+//      pluginResult.setKeepCallback(true);
+
     } else if ("play".equals(action)) {
       mRadioManager.startRadio(args.getString(0), args.getString(1), args.getString(2));
-
-
-      this.connectionCallbackContext = callbackContext;
-      PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
-      pluginResult.setKeepCallback(true);
+      callbackContext.success();
       return true;
-      //callbackContext.sendPluginResult(pluginResult);
-      //return pluginResult;
 
-      /*
-      this.callbackContext = callbackContext;
-      PluginResult result = new PluginResult(PluginResult.Status.NO_RESULT);
-      result.setKeepCallback(true);
-      this.callbackContext.sendPluginResult(result);
-      */
-
-      //callbackContext.success();
-      //return true;
     } else if ("stop".equals(action)) {
       mRadioManager.stopRadio();
       callbackContext.success();
@@ -108,7 +95,7 @@ public class RadioPlugin extends CordovaPlugin implements RadioListener {
   }
 
   @Override
-  public void onRadioStopped() {
+  public void onRadioStopped(boolean closedFromNotification) {
     Log.e(LOG_TAG, "RADIO STATE : STOPPED...");
 
     if (this.connectionCallbackContext != null) {
@@ -116,11 +103,16 @@ public class RadioPlugin extends CordovaPlugin implements RadioListener {
       //PluginResult result = new PluginResult(PluginResult.Status.OK, data);
       //result.setKeepCallback(false);
       //this.success(result, this.myCallbackId);
-
-      PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, "STOPPED");
-      pluginResult.setKeepCallback(false);
+      PluginResult pluginResult = null;
+      if (closedFromNotification) {
+        pluginResult = new PluginResult(PluginResult.Status.OK, "STOPPED-FROM-NOTIFICATION");
+      } else {
+        pluginResult = new PluginResult(PluginResult.Status.OK, "STOPPED");
+      }
+      //pluginResult.setKeepCallback(false);
+      pluginResult.setKeepCallback(true);
       this.connectionCallbackContext.sendPluginResult(pluginResult);
-      this.connectionCallbackContext = null;
+      //this.connectionCallbackContext = null;
 
 
       //this.success(result, this.myCallbackId);

@@ -8,7 +8,7 @@ public interface RadioListener {
 
   void onRadioStarted();
 
-  void onRadioStopped();
+  void onRadioStopped(boolean closedFromNotification);
 
   void onMetaDataReceived(String s, String s2);
 

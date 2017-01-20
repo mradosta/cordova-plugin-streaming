@@ -48,6 +48,7 @@ public class RadioPlayerService extends Service implements PlayerCallback {
     private String songName = "";
     private int smallImage;
     private Bitmap artImage;
+    private int volume = 100;
 
     /**
      * Notification ID
@@ -103,6 +104,11 @@ public class RadioPlayerService extends Service implements PlayerCallback {
      * AAC Radio Player
      */
     private MultiPlayer mRadioPlayer;
+
+    /**
+     * Android audio track
+     */
+    private AudioTrack audioTrack;
 
     /**
      * Will be controlled on incoming calls and stop and start player.
@@ -182,18 +188,21 @@ public class RadioPlayerService extends Service implements PlayerCallback {
                 isClosedFromNotification = true;
                 stop();
             }
-            if (mNotificationManager != null)
+
+            if (mNotificationManager != null) {
                 mNotificationManager.cancel(NOTIFICATION_ID);
+            }
         }
         /**
          * If play/pause action clicked on notification,
          * Check player state and stop/play streaming.
          */
         else if (action.equals(NOTIFICATION_INTENT_PLAY_PAUSE)) {
-            if (isPlaying())
+            if (isPlaying()) {
                 stop();
-            else if (mRadioUrl != null)
+            } else if (mRadioUrl != null) {
                 play(mRadioUrl);
+            }
 
         }
 
@@ -217,8 +226,9 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        if (mTelephonyManager != null)
+        if (mTelephonyManager != null) {
             mTelephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+        }
     }
 
     /**
@@ -229,9 +239,9 @@ public class RadioPlayerService extends Service implements PlayerCallback {
      * @param songName
      */
     public void play(String mRadioUrl, String singerName, String songName) {
-      this.singerName = singerName;
-      this.songName = songName;
-      this.play(mRadioUrl);
+        this.singerName = singerName;
+        this.songName = songName;
+        this.play(mRadioUrl);
     }
 
     /**
@@ -245,9 +255,9 @@ public class RadioPlayerService extends Service implements PlayerCallback {
 
         notifyRadioLoading();
 
-        if (checkSuffix(mRadioUrl))
+        if (checkSuffix(mRadioUrl)) {
             decodeStremLink(mRadioUrl);
-        else {
+        } else {
             this.mRadioUrl = mRadioUrl;
             isSwitching = false;
 
@@ -271,6 +281,23 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         }
     }
 
+    public void setVolume(int volume) {
+        if (volume < 0) {
+            volume = 0;
+        } else if (volume > 100) {
+            volume = 100;
+        }
+
+        this.volume = volume;
+        this.updateTrackVolume();
+    }
+
+    private void updateTrackVolume() {
+        if (this.audioTrack != null) {
+            this.audioTrack.setVolume(this.volume * 0.01f);
+        }
+    }
+
     @Override
     public void playerStarted() {
         mRadioState = State.PLAYING;
@@ -280,14 +307,18 @@ public class RadioPlayerService extends Service implements PlayerCallback {
 
         log("Player started. tate : " + mRadioState);
 
-        if (isInterrupted)
+        if (isInterrupted) {
             isInterrupted = false;
+        }
 
+        // this.updateTrackVolume();
     }
 
     public boolean isPlaying() {
-        if (State.PLAYING == mRadioState)
+        if (State.PLAYING == mRadioState) {
             return true;
+        }
+
         return false;
     }
 
@@ -307,19 +338,20 @@ public class RadioPlayerService extends Service implements PlayerCallback {
          */
          log("Player stopped. isClosedFromNotification : " + isClosedFromNotification);
         notifyRadioStopped(isClosedFromNotification);
-        if (!isClosedFromNotification)
+
+        if (!isClosedFromNotification) {
             buildNotification();
-        else
+        } else {
             isClosedFromNotification = false;
+        }
 
         mLock = false;
         mNotificationManager.cancel(NOTIFICATION_ID);
         log("Player stopped. State : " + mRadioState);
 
-        if (isSwitching)
+        if (isSwitching) {
             play(mRadioUrl);
-
-
+        }
     }
 
     @Override
@@ -338,7 +370,8 @@ public class RadioPlayerService extends Service implements PlayerCallback {
 
     @Override
     public void playerAudioTrackCreated(AudioTrack audioTrack) {
-        //Empty
+        this.audioTrack = audioTrack;
+        this.updateTrackVolume();
     }
 
     public void registerListener(RadioListener mListener) {
@@ -356,13 +389,15 @@ public class RadioPlayerService extends Service implements PlayerCallback {
     }
 
     private void notifyRadioStopped(boolean closedFromNotification) {
-        for (RadioListener mRadioListener : mListenerList)
+        for (RadioListener mRadioListener : mListenerList) {
             mRadioListener.onRadioStopped(closedFromNotification);
+        }
     }
 
     private void notifyMetaDataChanged(String s, String s2) {
-        for (RadioListener mRadioListener : mListenerList)
+        for (RadioListener mRadioListener : mListenerList) {
             mRadioListener.onMetaDataReceived(s, s2);
+        }
     }
 
     private void notifyRadioLoading() {
@@ -377,7 +412,6 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         }
     }
 
-
     /**
      * Return AAC player. If it is not initialized, creates and returns.
      *
@@ -385,13 +419,14 @@ public class RadioPlayerService extends Service implements PlayerCallback {
      */
     private MultiPlayer getPlayer() {
         try {
-
             java.net.URL.setURLStreamHandlerFactory(new java.net.URLStreamHandlerFactory() {
-
                 public java.net.URLStreamHandler createURLStreamHandler(String protocol) {
                     Log.d("LOG", "Asking for stream handler for protocol: '" + protocol + "'");
-                    if ("icy".equals(protocol))
+
+                    if ("icy".equals(protocol)) {
                         return new com.spoledge.aacdecoder.IcyURLStreamHandler();
+                    }
+
                     return null;
                 }
             });
@@ -404,6 +439,7 @@ public class RadioPlayerService extends Service implements PlayerCallback {
             mRadioPlayer.setResponseCodeCheckEnabled(false);
             mRadioPlayer.setPlayerCallback(this);
         }
+
         return mRadioPlayer;
     }
 
@@ -411,7 +447,6 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             if (state == TelephonyManager.CALL_STATE_RINGING) {
-
                 /**
                  * Stop radio and set interrupted if it is playing on incoming call.
                  */
@@ -419,15 +454,13 @@ public class RadioPlayerService extends Service implements PlayerCallback {
                     isInterrupted = true;
                     stop();
                 }
-
             } else if (state == TelephonyManager.CALL_STATE_IDLE) {
-
                 /**
                  * Keep playing if it is interrupted.
                  */
-                if (isInterrupted)
+                if (isInterrupted) {
                     play(mRadioUrl);
-
+                }
             } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
 
                 /**
@@ -439,6 +472,7 @@ public class RadioPlayerService extends Service implements PlayerCallback {
                 }
 
             }
+
             super.onCallStateChanged(state, incomingNumber);
         }
     };
@@ -450,12 +484,15 @@ public class RadioPlayerService extends Service implements PlayerCallback {
      * @return
      */
     public boolean checkSuffix(String streamUrl) {
-        if (streamUrl.contains(SUFFIX_PLS) ||
-                streamUrl.contains(SUFFIX_RAM) ||
-                streamUrl.contains(SUFFIX_WAX))
+        if (
+            streamUrl.contains(SUFFIX_PLS) ||
+            streamUrl.contains(SUFFIX_RAM) ||
+            streamUrl.contains(SUFFIX_WAX)
+        ) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -473,8 +510,9 @@ public class RadioPlayerService extends Service implements PlayerCallback {
      * @param log
      */
     private void log(String log) {
-        if (isLogging)
+        if (isLogging) {
             Log.v("RadioManager", "RadioPlayerService : " + log);
+        }
     }
 
     /**
@@ -523,8 +561,9 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         /**
          * set small notification texts and image
          */
-        if (artImage == null)
+        if (artImage == null) {
             artImage = BitmapFactory.decodeResource(getResources(), fakeR.getId("drawable", "default_art"));
+        }
 
         mNotificationTemplate.setTextViewText(fakeR.getId("id", "notification_line_one"), singerName);
         mNotificationTemplate.setTextViewText(fakeR.getId("id", "notification_line_two"), songName);
@@ -536,7 +575,6 @@ public class RadioPlayerService extends Service implements PlayerCallback {
          */
         mNotificationTemplate.setOnClickPendingIntent(fakeR.getId("id", "notification_collapse"), cancelPending);
         mNotificationTemplate.setOnClickPendingIntent(fakeR.getId("id", "notification_play"), playPausePending);
-
 
         /**
          * Create notification instance
@@ -554,7 +592,6 @@ public class RadioPlayerService extends Service implements PlayerCallback {
          * Expanded notification
          */
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-
             RemoteViews mExpandedView = new RemoteViews(this.getPackageName(), fakeR.getId("layout", "notification_expanded"));
 
             mExpandedView.setTextViewText(fakeR.getId("id", "notification_line_one"), singerName);
@@ -568,8 +605,9 @@ public class RadioPlayerService extends Service implements PlayerCallback {
                                             notification.bigContentView = mExpandedView;
         }
 
-        if (mNotificationManager != null)
+        if (mNotificationManager != null) {
             mNotificationManager.notify(NOTIFICATION_ID, notification);
+        }
     }
 
     public void updateNotification(String singerName, String songName, int smallImage, int artImage) {
@@ -580,7 +618,6 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         buildNotification();
     }
 
-
     public void updateNotification(String singerName, String songName, int smallImage, Bitmap artImage) {
         this.singerName = singerName;
         this.songName = songName;
@@ -588,6 +625,4 @@ public class RadioPlayerService extends Service implements PlayerCallback {
         this.artImage = artImage;
         buildNotification();
     }
-
-
 }

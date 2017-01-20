@@ -7,6 +7,8 @@ public interface IRadioManager {
 
     void stopRadio();
 
+    void setRadioVolume(int volume);
+
     boolean isPlaying();
 
     void registerListener(RadioListener mRadioListener);

@@ -41,7 +41,9 @@ onDeviceReady: function() {
 
   navigator.RADIO.initialize(function(s) {
     console.log('SUCCESS navigator.RADIO.initialize');
-    if (s == 'STOPPED-FROM-NOTIFICATION') {
+    if (s == 'STARTED') {
+      // the reproduction was successfully started
+    } else if (s == 'STOPPED-FROM-NOTIFICATION') {
       // the reproduction was stopped from the notification
     } else if (s == 'STOPPED') {
       // the reproduction was stopped other than the notification
@@ -67,6 +69,14 @@ navigator.RADIO.stop(function(s) {
 }, function(s) {
   console.log('ERROR navigator.RADIO.stop');
 });
+
+
+var volume = 50; // volume between 0 (silent) and 100
+navigator.RADIO.setVolume(function(s) {
+  console.log('SUCCESS navigator.RADIO.setVolume');
+}, function(s) {
+  console.log('ERROR navigator.RADIO.setVolume');
+}, volume);
 ```
 
 

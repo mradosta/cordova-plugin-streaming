@@ -97,6 +97,14 @@ public class RadioManager implements IRadioManager {
     }
 
     /**
+     * Set Radio Streaming volume
+     */
+    @Override
+    public void setRadioVolume(int volume) {
+        mService.setVolume(volume);
+    }
+
+    /**
      * Check if radio is playing
      * @return
      */
